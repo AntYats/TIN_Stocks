@@ -9,8 +9,7 @@ General idea:
 [3] In range of days of lowest_price to highest_price print 📈 or 📉 of price for each day
 [4] Do steps [1] -> [2] -> [3] but begin searching from day of the sell
 ---- 
-Founded dates break time rules
-so there is no need to check if day to buy is after day of sold 
+
 ----
 """
 
