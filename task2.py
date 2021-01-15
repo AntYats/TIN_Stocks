@@ -20,7 +20,7 @@ def init():
     # Array with data preparation
     final_data = []
     # Read file and put data to array
-    with open('data.csv', newline='') as file:
+    with open('new.csv', newline='') as file:
         reader = csv.reader(file)
         for row in reader:
             data_preparation_arr.append(row)
@@ -58,11 +58,10 @@ def init():
         if day["Price"] > max_price["Price"]:
             max_price = day
 
-    print(f"Дата покупки: {format_date(min_price['Date'])} || Стоимость акций: {min_price['Price']}")
-    print(f"Дата продажи: {format_date(max_price['Date'])} || Стоимость акций: {max_price['Price']}")
-    print(f"Стоимость акций увеличилась на {max_price['Price'] - min_price['Price']}$")
+    print_transaction(min_price, max_price)
 
-    idx_of_max = final_data.index(max_price)
+
+    idx_of_sold_day = final_data.index(max_price)
 
     min_price_2 = {
         "Date": None,
@@ -75,8 +74,9 @@ def init():
         "Time": None,
         "Price": MAX_DEFAULT_PRICE,
     }
-
-    for day in range(idx_of_max, len(final_data)):
+    
+    # Find min and max price from previous sold day
+    for day in range(idx_of_sold_day, len(final_data)):
         if final_data[day]["Price"] < min_price_2["Price"]:
             min_price_2 = final_data[day]
 
@@ -86,9 +86,8 @@ def init():
         if final_data[day]["Price"] > max_price_2["Price"]:
             max_price_2 = final_data[day]
 
-    print(f"Дата покупки: {format_date(min_price_2['Date'])} || Стоимость акций: {min_price_2['Price']}")
-    print(f"Дата продажи: {format_date(max_price_2['Date'])} || Стоимость акций: {max_price_2['Price']}")
-    print(f"Стоимость акций увеличилась на {max_price_2['Price'] - min_price_2['Price']}$")
+    print_transaction(min_price_2, max_price_2)
+
 
 def format_date(time):
     time = str(time)
@@ -96,6 +95,12 @@ def format_date(time):
     month = time[4:6]
     year = time[0:4]
     return date + "-" + month + "-" + year
+
+
+def print_transaction(arr_min, arr_max):
+    print(f"Дата покупки: {format_date(arr_min['Date'])} || Стоимость акций: {arr_min['Price']}")
+    print(f"Дата продажи: {format_date(arr_max['Date'])} || Стоимость акций: {arr_max['Price']}")
+    print(f"Стоимость акций увеличилась на {arr_max['Price'] - arr_min['Price']}$")
 
 
 if __name__ == "__main__":
