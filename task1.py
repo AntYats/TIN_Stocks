@@ -1,27 +1,12 @@
 import csv
 
-"""
-LEVEL ONE
-
-General idea:
-[1] Find lowest price at all time -> Save all data of this date (lowest_price)
-[2] Find highest price at all time -> Save all data of this date (highest_price)
-[3] In range of days of lowest_price to highest_price print 📈 or 📉 of price for each day
-
----- 
-Founded dates don't break time rules, 
-so there is no need to check if day to buy is after day of sold 
-----
-"""
-
-
 def init():
     # Array to put raw data from file
     data_preparation_arr = []
     # Array with data preparation
     final_data = []
     # Read file and put data to array
-    with open('data.csv', newline='') as file:
+    with open("new.csv", newline='') as file:
         reader = csv.reader(file)
         for row in reader:
             data_preparation_arr.append(row)
@@ -35,34 +20,45 @@ def init():
             "Price": float(day[3]),
         })
 
-    # Constants
-    MIN_DEFAULT_PRICE = 100000000
-    MAX_DEFAULT_PRICE = -1
-
+    # Default values
+    max_profit = -10 ** 10
     min_price = {
-        "Date": None,
-        "Time": None,
-        "Price": MIN_DEFAULT_PRICE,
+        "Date": final_data[0]["Date"],
+        "Time": final_data[0]["Time"],
+        "Price": final_data[0]["Price"]
     }
 
-    max_price = {
+    # Variables to print transaction info
+    day_of_sell = {
         "Date": None,
         "Time": None,
-        "Price": MAX_DEFAULT_PRICE,
+        "Price": None
     }
 
-    for day in final_data:
-        # Find minimum price to buy
-        if day["Price"] < min_price["Price"]:
-            min_price = day
-        # Find maximum price to sold
-        if day["Price"] > max_price["Price"]:
-            max_price = day
+    day_of_buy = {
+        "Date": None,
+        "Time": None,
+        "Price": None
+    }
 
-    print(f"Дата покупки: {format_date(min_price['Date'])} || Стоимость акций: {min_price['Price']}")
-    print(f"Дата продажи: {format_date(max_price['Date'])} || Стоимость акций: {max_price['Price']}")
-    print(f"Стоимость акций увеличилась на {max_price['Price'] - min_price['Price']}$")
+    for i in range(1, len(final_data)):
+        curr_day = final_data[i]
 
+        if curr_day["Price"] - min_price["Price"] > max_profit:
+            max_profit = curr_day["Price"] - min_price["Price"]
+            day_of_sell = curr_day
+            day_of_buy = min_price
+
+        if curr_day["Price"] < min_price["Price"]:
+            min_price = curr_day
+
+    print_transaction(day_of_buy, day_of_sell)
+
+
+def print_transaction(arr_min, arr_max):
+    print(f"Дата покупки: {format_date(arr_min['Date'])} || Стоимость акций: {arr_min['Price']}")
+    print(f"Дата продажи: {format_date(arr_max['Date'])} || Стоимость акций: {arr_max['Price']}")
+    print(f"Стоимость акций увеличилась на {arr_max['Price'] - arr_min['Price']}$")
 
 def format_date(time):
     time = str(time)
